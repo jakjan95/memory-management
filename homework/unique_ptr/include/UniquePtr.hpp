@@ -14,10 +14,10 @@ public:
     UniquePtr(const UniquePtr<T>&) = delete;
     UniquePtr<T>& operator=(const UniquePtr<T>&) = delete;
 
-    UniquePtr(UniquePtr<T>&& ptr);
-    UniquePtr<T>& operator=(UniquePtr<T>&& ptr);
+    UniquePtr(UniquePtr<T>&& ptr) noexcept;
+    UniquePtr<T>& operator=(UniquePtr<T>&& ptr) noexcept;
 
-    T operator*() const;
+    T& operator*() const;
     T* operator->() const;
     T* get();
     T* release();
@@ -36,22 +36,21 @@ UniquePtr<T>::UniquePtr(T* ptr)
     : ptr_{ptr} {}
 
 template <typename T>
-UniquePtr<T>::UniquePtr(UniquePtr<T>&& ptr)
+UniquePtr<T>::UniquePtr(UniquePtr<T>&& ptr) noexcept
     : ptr_{ptr.release()} {}
 
 template <typename T>
-UniquePtr<T>& UniquePtr<T>::operator=(UniquePtr<T>&& ptr) {
-    if (this == &ptr) {
-        return *this;
+UniquePtr<T>& UniquePtr<T>::operator=(UniquePtr<T>&& ptr) noexcept{
+    if (this != &ptr) {
+        delete ptr_;
+        ptr_ = ptr.ptr_;
+        ptr.ptr_ = nullptr;
     }
-    delete ptr_;
-    ptr_ = ptr.ptr_;
-    ptr.ptr_ = nullptr;
     return *this;
 }
 
 template <typename T>
-T UniquePtr<T>::operator*() const {
+T& UniquePtr<T>::operator*() const {
     if (!ptr_) {
         throw NullptrDereferenceError();
     }
