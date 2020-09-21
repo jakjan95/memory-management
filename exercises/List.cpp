@@ -10,6 +10,10 @@ public:
         value(v)
     {}
 
+    ~Node() {
+        delete next;
+    }
+
     Node* next;
     int value;
 };
@@ -21,6 +25,9 @@ public:
     void add(Node* node);
     Node* get(const int value);
 
+    ~List(){
+        delete first;
+    }
 private:
     Node* first;
 };
