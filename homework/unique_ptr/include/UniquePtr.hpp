@@ -40,7 +40,7 @@ UniquePtr<T>::UniquePtr(UniquePtr<T>&& ptr) noexcept
     : ptr_{ptr.release()} {}
 
 template <typename T>
-UniquePtr<T>& UniquePtr<T>::operator=(UniquePtr<T>&& ptr) noexcept{
+UniquePtr<T>& UniquePtr<T>::operator=(UniquePtr<T>&& ptr) noexcept {
     if (this != &ptr) {
         delete ptr_;
         ptr_ = ptr.ptr_;
