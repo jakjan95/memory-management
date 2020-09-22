@@ -4,6 +4,10 @@
 
 constexpr int initialValue = 5;
 
+struct A {
+    int foo() { return initialValue; }
+};
+
 struct SharedPtrTest : ::testing::Test {
     SharedPtrTest()
         : ptr(new int{initialValue}) {}
@@ -29,4 +33,10 @@ TEST_F(SharedPtrTest, shouldMoveSharedPtr) {
 
     auto ptr3 = std::move(ptr2);
     ASSERT_EQ(*ptr3, initialValue);
+}
+
+TEST(SharedPtrArrowOperator, shouldUseArrowOperator) {
+    cs::shared_ptr<A> ptr(new A{});
+
+    ASSERT_EQ(ptr->foo(), initialValue);
 }

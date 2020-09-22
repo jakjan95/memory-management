@@ -19,6 +19,7 @@ public:
     shared_ptr& operator=(shared_ptr&& other) noexcept;
 
     T& operator*() const noexcept { return *ptr_; }
+    T* operator->() const noexcept { return ptr_; }
 
 private:
     T* ptr_ = nullptr;
