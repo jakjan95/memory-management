@@ -14,3 +14,11 @@ struct SharedPtrTest : ::testing::Test {
 TEST_F(SharedPtrTest, shouldDereferenceSharedPtr) {
     ASSERT_EQ(*ptr, initialValue);
 }
+
+TEST_F(SharedPtrTest, shouldCopySharedPtr) {
+    auto ptr2(ptr);
+    auto ptr3 = ptr;
+
+    ASSERT_EQ(*ptr, *ptr2);
+    ASSERT_EQ(*ptr, *ptr3);
+}
