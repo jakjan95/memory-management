@@ -22,3 +22,11 @@ TEST_F(SharedPtrTest, shouldCopySharedPtr) {
     ASSERT_EQ(*ptr, *ptr2);
     ASSERT_EQ(*ptr, *ptr3);
 }
+
+TEST_F(SharedPtrTest, shouldMoveSharedPtr) {
+    auto ptr2(std::move(ptr));
+    ASSERT_EQ(*ptr2, initialValue);
+
+    auto ptr3 = std::move(ptr2);
+    ASSERT_EQ(*ptr3, initialValue);
+}
