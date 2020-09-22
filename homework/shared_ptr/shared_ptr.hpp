@@ -18,6 +18,8 @@ public:
     shared_ptr& operator=(const shared_ptr& other) noexcept;
     shared_ptr& operator=(shared_ptr&& other) noexcept;
 
+    T& operator*() const noexcept { return *ptr_; }
+
 private:
     T* ptr_ = nullptr;
     SharedControlBlock* controlBlock_ = nullptr;
