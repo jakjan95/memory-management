@@ -22,6 +22,7 @@ public:
     T* operator->() const noexcept { return ptr_; }
 
     T* get() const noexcept { return ptr_; }
+    size_t use_count() const noexcept;
 
 private:
     T* ptr_ = nullptr;
@@ -88,6 +89,14 @@ shared_ptr<T>& shared_ptr<T>::operator=(shared_ptr<T>&& other) noexcept {
     other.ptr_ = nullptr;
     other.controlBlock_ = nullptr;
     return *this;
+}
+
+template <typename T>
+size_t shared_ptr<T>::use_count() const noexcept {
+    if (controlBlock_) {
+        return controlBlock_->getSharedRefs();
+    }
+    return 0;
 }
 
 }  // namespace cs

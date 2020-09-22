@@ -35,6 +35,14 @@ TEST_F(SharedPtrTest, shouldMoveSharedPtr) {
     ASSERT_EQ(*ptr3, initialValue);
 }
 
+TEST_F(SharedPtrTest, shouldReturnUseCount) {
+    constexpr size_t numOfPtrs = 3;
+    auto ptr2 = ptr;
+    auto ptr3 = ptr;
+
+    ASSERT_EQ(ptr.use_count(), numOfPtrs);
+}
+
 TEST(SharedPtrArrowOperator, shouldUseArrowOperator) {
     cs::shared_ptr<A> ptr(new A{});
 
