@@ -43,6 +43,13 @@ TEST_F(SharedPtrTest, shouldReturnUseCount) {
     ASSERT_EQ(ptr.use_count(), numOfPtrs);
 }
 
+TEST_F(SharedPtrTest, shouldConvertSharedPtrToBool) {
+    cs::shared_ptr<int> ptr2;
+
+    ASSERT_TRUE(ptr);
+    ASSERT_FALSE(ptr2);
+}
+
 TEST(SharedPtrArrowOperator, shouldUseArrowOperator) {
     cs::shared_ptr<A> ptr(new A{});
 

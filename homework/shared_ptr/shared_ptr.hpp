@@ -20,6 +20,7 @@ public:
 
     T& operator*() const noexcept { return *ptr_; }
     T* operator->() const noexcept { return ptr_; }
+    explicit operator bool() const noexcept { return ptr_; }
 
     T* get() const noexcept { return ptr_; }
     size_t use_count() const noexcept;
