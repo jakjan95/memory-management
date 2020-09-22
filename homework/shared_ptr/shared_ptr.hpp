@@ -21,6 +21,8 @@ public:
     T& operator*() const noexcept { return *ptr_; }
     T* operator->() const noexcept { return ptr_; }
 
+    T* get() const noexcept { return ptr_; }
+
 private:
     T* ptr_ = nullptr;
     SharedControlBlock* controlBlock_ = nullptr;
