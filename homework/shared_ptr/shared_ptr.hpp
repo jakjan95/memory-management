@@ -9,7 +9,11 @@ public:
     constexpr shared_ptr() noexcept = default;
     constexpr shared_ptr(std::nullptr_t) noexcept {}
     explicit shared_ptr(T* ptr)
-        : ptr_(ptr), controlBlock_(new SharedControlBlock{}) {}
+        : ptr_(ptr), controlBlock_(new SharedControlBlock<T>{}) {}
+    shared_ptr(T* ptr, void defDeleter(T*))
+        : ptr_(ptr), controlBlock_(new SharedControlBlock<T>{defDeleter}) {}
+    shared_ptr(std::nullptr_t, void defDeleter(T*))
+        : controlBlock_(new SharedControlBlock<T>{defDeleter}) {}
 
     shared_ptr(const shared_ptr& other) noexcept;
     shared_ptr(shared_ptr&& other) noexcept;
@@ -27,7 +31,7 @@ public:
 
 private:
     T* ptr_ = nullptr;
-    SharedControlBlock* controlBlock_ = nullptr;
+    SharedControlBlock<T>* controlBlock_ = nullptr;
 };
 
 template <typename T>
@@ -49,7 +53,7 @@ template <typename T>
 shared_ptr<T>::~shared_ptr() {
     if (controlBlock_) {
         if (controlBlock_->getSharedRefs() == 1) {
-            delete ptr_;
+            controlBlock_->defaultDeleter(ptr_);
             delete controlBlock_;
         } else {
             controlBlock_->decrementSharedRefs();
@@ -61,7 +65,7 @@ template <typename T>
 shared_ptr<T>& shared_ptr<T>::operator=(const shared_ptr<T>& other) noexcept {
     if (controlBlock_) {
         if (controlBlock_->getSharedRefs() == 1) {
-            delete ptr_;
+            controlBlock_->defaultDeleter(ptr_);
             delete controlBlock_;
         } else {
             controlBlock_->decrementSharedRefs();
@@ -78,7 +82,7 @@ template <typename T>
 shared_ptr<T>& shared_ptr<T>::operator=(shared_ptr<T>&& other) noexcept {
     if (controlBlock_) {
         if (controlBlock_->getSharedRefs() == 1) {
-            delete ptr_;
+            controlBlock_->defaultDeleter(ptr_);
             delete controlBlock_;
         } else {
             controlBlock_->decrementSharedRefs();

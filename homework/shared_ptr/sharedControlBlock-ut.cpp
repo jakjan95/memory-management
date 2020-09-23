@@ -5,7 +5,7 @@
 constexpr size_t initialValue = 1;
 
 struct SharedControlBlockTest : ::testing::Test {
-    SharedControlBlock controlBlock;
+    SharedControlBlock<int> controlBlock;
 };
 
 TEST_F(SharedControlBlockTest, shouldGetSharedRefsValue) {
