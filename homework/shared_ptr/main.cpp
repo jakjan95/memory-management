@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "make_shared.hpp"
 #include "shared_ptr.hpp"
 
 void customDeleter(int* ptr) {
@@ -17,6 +18,8 @@ int main() {
     ptr5 = std::move(ptr3);
 
     cs::shared_ptr<int> ptrDel(new int{5}, customDeleter);
+
+    auto ptr6 = cs::make_shared<int>(5);
 
     return 0;
 }
