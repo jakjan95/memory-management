@@ -2,18 +2,19 @@
 
 #include <atomic>
 #include <cstddef>
+#include <functional>
 
 template <typename T>
 class SharedControlBlock {
 public:
-    SharedControlBlock(void defDeleter(T*) = [](T* ptrToDelete) { delete ptrToDelete; })
+    SharedControlBlock(std::function<void(T*)> defDeleter = [](T* ptrToDelete) { delete ptrToDelete; })
         : defaultDeleter(defDeleter) {}
 
     void incrementSharedRefs() { ++sharedRefs_; }
     void decrementSharedRefs() { --sharedRefs_; }
     size_t getSharedRefs() const { return sharedRefs_.load(); }
 
-    void (*defaultDeleter)(T*);
+    std::function<void(T*)> defaultDeleter;
 
 private:
     std::atomic<size_t> sharedRefs_ = 1;
