@@ -2,10 +2,6 @@
 
 #include "make_shared.hpp"
 
-constexpr int firstValue = 1;
-constexpr int secondValue = 2;
-constexpr int thirdValue = 3;
-
 struct A {
     A(int a, int b, int c)
         : a_(a), b_(b), c_(c) {}
@@ -16,6 +12,10 @@ struct A {
 };
 
 TEST(MakeSharedTest, shouldCreateSharedPtrUsingMakeShared) {
+    constexpr int firstValue = 1;
+    constexpr int secondValue = 2;
+    constexpr int thirdValue = 3;
+
     cs::shared_ptr<A> ptr = cs::make_shared<A>(firstValue, secondValue, thirdValue);
 
     ASSERT_EQ(ptr->a_, firstValue);
