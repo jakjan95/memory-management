@@ -32,6 +32,9 @@ void List::add(const shared_ptr<Node>& node) {
     } else {
         shared_ptr<Node> current = first;
         while (current->next) {
+            if (current == node) {
+                throw runtime_error{"Node already in list\n"};
+            }
             current = current->next;
         }
         current->next = node;
@@ -63,11 +66,16 @@ int main() {
     shared_ptr<Node> node4 = make_shared<Node>(4);
     shared_ptr<Node> node7 = make_shared<Node>(7);
 
-    lista.add(node4);
+    lista.add(std::move(node4));
     lista.add(make_shared<Node>(2));
     lista.add(node7);
     lista.add(make_shared<Node>(9));
 
+    try {
+        lista.add(node7);
+    } catch (exception& e) {
+        cerr << "Error: " << e.what() << '\n';
+    }
 
     auto node = lista.get(1);
 
