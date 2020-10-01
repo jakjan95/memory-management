@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "sharedControlBlock.hpp"
 
 namespace cs {
@@ -10,9 +12,9 @@ public:
     constexpr shared_ptr(std::nullptr_t) noexcept {}
     explicit shared_ptr(T* ptr)
         : ptr_(ptr), controlBlock_(new SharedControlBlock<T>{}) {}
-    shared_ptr(T* ptr, void defDeleter(T*))
+    shared_ptr(T* ptr, std::function<void(T*)> defDeleter)
         : ptr_(ptr), controlBlock_(new SharedControlBlock<T>{defDeleter}) {}
-    shared_ptr(std::nullptr_t, void defDeleter(T*))
+    shared_ptr(std::nullptr_t, std::function<void(T*)> defDeleter)
         : controlBlock_(new SharedControlBlock<T>{defDeleter}) {}
 
     shared_ptr(const shared_ptr& other) noexcept;
