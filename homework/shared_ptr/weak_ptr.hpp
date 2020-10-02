@@ -30,7 +30,9 @@ private:
 template <typename T>
 weak_ptr<T>::weak_ptr(const weak_ptr<T>& r) noexcept
     : ptr_{r.ptr_}, controlBlock_{r.controlBlock_} {
-    controlBlock_->incrementWeakRefs();
+    if (controlBlock_) {
+        controlBlock_->incrementWeakRefs();
+    }
 }
 
 template <typename T>
@@ -46,14 +48,17 @@ weak_ptr<T>::weak_ptr(weak_ptr<T>&& r) noexcept
 template <typename T>
 weak_ptr<T>& weak_ptr<T>::operator=(const weak_ptr<T>& r) noexcept {
     ptr_ = r.ptr_;
-    controlBlock_->incrementWeakRefs();
+    if (controlBlock_) {
+        controlBlock_->incrementWeakRefs();
+    }
+    return *this;
 }
 
 template <typename T>
 weak_ptr<T>& weak_ptr<T>::operator=(const shared_ptr<T>& r) noexcept {
     ptr_ = r.ptr_;
+    controlBlock_ = r.controlBlock_;
     controlBlock_->incrementWeakRefs();
-    r->controlBlock_->incrementSharedRefs();
 }
 
 template <typename T>
@@ -62,8 +67,6 @@ weak_ptr<T>& weak_ptr<T>::operator=(weak_ptr<T>&& r) noexcept {
         delete ptr_;
         ptr_ = r.ptr_;
         r.ptr_ = nullptr;
-        r.controlBlock_->decrementWeakRefs();
-        controlBlock_->incrementWeakRefs();
     }
     return *this;
 }
@@ -101,7 +104,10 @@ cs::shared_ptr<T> weak_ptr<T>::lock() const noexcept {
 template <typename T>
 void weak_ptr<T>::reset() noexcept {
     ptr_ = nullptr;
-    controlBlock_->decrementWeakRefs();
+
+    if (controlBlock_) {
+        controlBlock_->decrementWeakRefs();
+    }
 }
 
 }  // namespace cs
