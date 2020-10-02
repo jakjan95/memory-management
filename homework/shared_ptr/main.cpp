@@ -24,12 +24,15 @@ int main() {
 
     //weak_ptr
 
-    cs::shared_ptr<int> sptr(new int{5});
-    cs::weak_ptr<int> wptr{sptr};
+    //cs::shared_ptr<int> sptr(new int{5});
+    cs::weak_ptr<int> wptr{};
     std::cout<<wptr.use_count()<<'\n';
-    cs::weak_ptr<int> wptr2{wptr};
+    cs::weak_ptr<int> wptr2{std::move(wptr)};
     std::cout<<wptr.use_count()<<'\n';
 
+
+    cs::weak_ptr<int> wptr3{wptr};
+    std::cout<<wptr.use_count()<<'\n';
 
     return 0;
 }

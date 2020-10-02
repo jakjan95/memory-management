@@ -71,7 +71,7 @@ weak_ptr<T>& weak_ptr<T>::operator=(weak_ptr<T>&& r) noexcept {
 template <typename T>
 weak_ptr<T>::~weak_ptr() {
     if (controlBlock_) {
-        if (controlBlock_->getWeakRefs() == 1) {
+        if (controlBlock_->getSharedRefs() == 1 && controlBlock_->getWeakRefs() == 1) {
             controlBlock_->defaultDeleter(ptr_);
             delete controlBlock_;
         } else {
