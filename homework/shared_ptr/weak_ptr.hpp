@@ -37,13 +37,16 @@ weak_ptr<T>::weak_ptr(const weak_ptr<T>& r) noexcept
 
 template <typename T>
 weak_ptr<T>::weak_ptr(const cs::shared_ptr<T>& r) noexcept
-    : ptr_{r.get()}, controlBlock_{r.controlBlock_} {
+    : ptr_{r.ptr_}, controlBlock_{r.controlBlock_} {
     controlBlock_->incrementWeakRefs();
 }
 
 template <typename T>
 weak_ptr<T>::weak_ptr(weak_ptr<T>&& r) noexcept
-    : ptr_{std::move(r.ptr_)}, controlBlock_{std::move(r.controlBlock_)} {}
+    : ptr_{std::move(r.ptr_)}, controlBlock_{std::move(r.controlBlock_)} {
+    r.ptr_ = nullptr;
+    r.controlBlock_ = nullptr;
+}
 
 template <typename T>
 weak_ptr<T>& weak_ptr<T>::operator=(const weak_ptr<T>& r) noexcept {
@@ -69,7 +72,9 @@ weak_ptr<T>& weak_ptr<T>::operator=(weak_ptr<T>&& r) noexcept {
     if (this != &r) {
         delete ptr_;
         ptr_ = r.ptr_;
+        controlBlock_ = r.controlBlock_;
         r.ptr_ = nullptr;
+        r.controlBlock_ = nullptr;
     }
     return *this;
 }
@@ -101,16 +106,23 @@ bool weak_ptr<T>::expired() const noexcept {
 
 template <typename T>
 cs::shared_ptr<T> weak_ptr<T>::lock() const noexcept {
-    return expired() ? cs::shared_ptr<T>() : cs::shared_ptr<T>(*this);
+    //return expired() ? cs::shared_ptr<T>() : cs::shared_ptr<T>(*this);
+    //need copy constructor which takes weak_ptr
+    return expired() ? cs::shared_ptr<T>() : cs::shared_ptr<T>(ptr_);
 }
 
 template <typename T>
 void weak_ptr<T>::reset() noexcept {
-    ptr_ = nullptr;
-
     if (controlBlock_) {
-        controlBlock_->decrementWeakRefs();
+        if (controlBlock_->getWeakRefs() == 1 && controlBlock_->getSharedRefs() == 1) {
+            controlBlock_->defaultDeleter(ptr_);
+            delete controlBlock_;
+        } else {
+            controlBlock_->decrementWeakRefs();
+        }
     }
+    ptr_ = nullptr;
+    controlBlock_ = nullptr;
 }
 
 }  // namespace cs
