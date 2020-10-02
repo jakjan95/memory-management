@@ -58,7 +58,10 @@ template <typename T>
 weak_ptr<T>& weak_ptr<T>::operator=(const shared_ptr<T>& r) noexcept {
     ptr_ = r.ptr_;
     controlBlock_ = r.controlBlock_;
-    controlBlock_->incrementWeakRefs();
+    if (controlBlock_) {
+        controlBlock_->incrementWeakRefs();
+    }
+    return *this;
 }
 
 template <typename T>

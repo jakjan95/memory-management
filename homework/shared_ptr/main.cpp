@@ -35,5 +35,11 @@ int main() {
     wptr3 = wptr2;
     std::cout << wptr.use_count() << '\n';
 
+    cs::shared_ptr<int> sptr1{new int{5}};
+    cs::weak_ptr<int> wptr4{sptr1};
+    std::cout << wptr4.use_count() << '\n';
+
+    //wptr3 = sptr1;
+
     return 0;
 }
