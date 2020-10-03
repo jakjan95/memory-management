@@ -38,6 +38,8 @@ public:
 private:
     T* ptr_ = nullptr;
     SharedControlBlock<T>* controlBlock_ = nullptr;
+    template <typename>
+    friend class weak_ptr;
 };
 
 template <typename T>
