@@ -1,4 +1,11 @@
+#pragma once
+
 #include <iostream>
+
+namespace cs {
+template <typename T>
+class weak_ptr;
+}  // namespace cs
 
 #include "sharedControlBlock.hpp"
 #include "shared_ptr.hpp"
@@ -25,7 +32,23 @@ public:
 private:
     T* ptr_ = nullptr;
     SharedControlBlock<T>* controlBlock_ = nullptr;
+
+    void deleteSeq();
+
+    template <typename>
+    friend class shared_ptr;
 };
+
+template <typename T>
+void weak_ptr<T>::deleteSeq() {
+    if (controlBlock_) {
+        controlBlock_->decrementWeakRefs();
+        if (controlBlock_->getSharedRefs() == 0 && controlBlock_->getWeakRefs() == 0) {
+            controlBlock_->defaultDeleter(ptr_);
+            delete controlBlock_;
+        }
+    }
+}
 
 template <typename T>
 weak_ptr<T>::weak_ptr(const weak_ptr<T>& r) noexcept
@@ -85,14 +108,7 @@ weak_ptr<T>& weak_ptr<T>::operator=(weak_ptr<T>&& r) noexcept {
 
 template <typename T>
 weak_ptr<T>::~weak_ptr() {
-    if (controlBlock_) {
-        if (controlBlock_->getSharedRefs() == 1 && controlBlock_->getWeakRefs() == 1) {
-            controlBlock_->defaultDeleter(ptr_);
-            delete controlBlock_;
-        } else {
-            controlBlock_->decrementWeakRefs();
-        }
-    }
+    deleteSeq();
 }
 
 template <typename T>
@@ -117,14 +133,8 @@ cs::shared_ptr<T> weak_ptr<T>::lock() const noexcept {
 
 template <typename T>
 void weak_ptr<T>::reset() noexcept {
-    if (controlBlock_) {
-        if (controlBlock_->getWeakRefs() == 1 && controlBlock_->getSharedRefs() == 1) {
-            controlBlock_->defaultDeleter(ptr_);
-            delete controlBlock_;
-        } else {
-            controlBlock_->decrementWeakRefs();
-        }
-    }
+    deleteSeq();
+
     ptr_ = nullptr;
     controlBlock_ = nullptr;
 }
